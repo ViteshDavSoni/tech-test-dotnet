@@ -8,7 +8,7 @@ namespace ClearBank.DeveloperTest.Infrastructure.Repositories
         public Account GetAccount(string accountNumber)
         {
             // Access database to retrieve account, code removed for brevity 
-            return new Account();
+            return Account.CreateNewAccount(accountNumber);
         }
 
         public void UpdateAccount(Account account)
