@@ -4,23 +4,11 @@ using ClearBank.DeveloperTest.Domain.Enums;
 
 namespace ClearBank.DeveloperTest.Application.PaymentRules;
 
-public class ChapsPaymentRule : IPaymentRule
+public class ChapsPaymentRule : PaymentRule
 {
-    public PaymentScheme Scheme => PaymentScheme.Chaps;
-
-    public MakePaymentResult MakePayment(Account account, MakePaymentRequest request)
-    {
-        var result = new MakePaymentResult();
-
-        if (!account.AllowedPaymentSchemes.HasFlag(AllowedPaymentSchemes.Chaps) ||
-            account.Status != AccountStatus.Live)
-        {
-            result.Success = false;
-            return result;
-        }
-
-        account.Balance -= request.Amount;
-        result.Success = true;
-        return result;
-    }
+    public override PaymentScheme Scheme => PaymentScheme.Chaps;
+    
+    public override bool ValidatePayment(Account account, MakePaymentRequest request)
+    => account.AllowedPaymentSchemes.HasFlag(AllowedPaymentSchemes.Chaps) &&
+            account.Status == AccountStatus.Live;
 }

@@ -4,23 +4,11 @@ using ClearBank.DeveloperTest.Domain.Enums;
 
 namespace ClearBank.DeveloperTest.Application.PaymentRules;
 
-public class FasterPaymentsRule : IPaymentRule
+public class FasterPaymentsRule : PaymentRule
 {
-    public PaymentScheme Scheme => PaymentScheme.FasterPayments;
+    public override PaymentScheme Scheme => PaymentScheme.FasterPayments;
 
-    public MakePaymentResult MakePayment(Account account, MakePaymentRequest request)
-    {
-        var result = new MakePaymentResult();
-
-        if (!account.AllowedPaymentSchemes.HasFlag(AllowedPaymentSchemes.FasterPayments) ||
-            account.Balance < request.Amount)
-        {
-            result.Success = false;
-            return result;
-        }
-
-        account.Balance -= request.Amount;
-        result.Success = true;
-        return result;
-    }
+    public override bool ValidatePayment(Account account, MakePaymentRequest request)
+        => account.AllowedPaymentSchemes.HasFlag(AllowedPaymentSchemes.FasterPayments) && 
+           account.Balance > request.Amount;
 }
