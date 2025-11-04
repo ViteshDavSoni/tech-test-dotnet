@@ -12,8 +12,7 @@ public class FasterPaymentsRule : IPaymentRule
     {
         var result = new MakePaymentResult();
 
-        if (account == null ||
-            !account.AllowedPaymentSchemes.HasFlag(AllowedPaymentSchemes.FasterPayments) ||
+        if (!account.AllowedPaymentSchemes.HasFlag(AllowedPaymentSchemes.FasterPayments) ||
             account.Balance < request.Amount)
         {
             result.Success = false;

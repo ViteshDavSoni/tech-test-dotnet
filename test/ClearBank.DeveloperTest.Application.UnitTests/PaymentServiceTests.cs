@@ -1,4 +1,6 @@
 using ClearBank.DeveloperTest.Application.Dtos;
+using ClearBank.DeveloperTest.Application.Factories;
+using ClearBank.DeveloperTest.Application.PaymentRules;
 using ClearBank.DeveloperTest.Application.Services;
 using ClearBank.DeveloperTest.Domain.Entities;
 using ClearBank.DeveloperTest.Domain.Enums;
@@ -12,12 +14,17 @@ namespace ClearBank.DeveloperTest.Application.UnitTests;
 public class PaymentServiceTests
 {
     private readonly Mock<IAccountRepository> _accountRepositoryMock;
-    private readonly IPaymentService _paymentService;
+    private readonly PaymentService _paymentService;
     
     public PaymentServiceTests()
     {
         _accountRepositoryMock = new Mock<IAccountRepository>();
-        _paymentService = new PaymentService(_accountRepositoryMock.Object);
+        var paymentRuleFactory = new PaymentRuleFactory([
+            new BacsPaymentRule(),
+            new ChapsPaymentRule(),
+            new FasterPaymentsRule()
+        ]);
+        _paymentService = new PaymentService(_accountRepositoryMock.Object, paymentRuleFactory);
     }
     
     [TestMethod]

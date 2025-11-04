@@ -4,15 +4,16 @@ using ClearBank.DeveloperTest.Domain.Enums;
 
 namespace ClearBank.DeveloperTest.Application.PaymentRules;
 
-public class BacsPaymentRule : IPaymentRule
+public class ChapsPaymentRule : IPaymentRule
 {
-    public PaymentScheme Scheme => PaymentScheme.Bacs;
+    public PaymentScheme Scheme => PaymentScheme.Chaps;
 
     public MakePaymentResult MakePayment(Account account, MakePaymentRequest request)
     {
         var result = new MakePaymentResult();
 
-        if (!account.AllowedPaymentSchemes.HasFlag(AllowedPaymentSchemes.Bacs))
+        if (!account.AllowedPaymentSchemes.HasFlag(AllowedPaymentSchemes.Chaps) ||
+            account.Status != AccountStatus.Live)
         {
             result.Success = false;
             return result;

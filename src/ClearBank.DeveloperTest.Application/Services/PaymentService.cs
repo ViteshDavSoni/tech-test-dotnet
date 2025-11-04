@@ -1,76 +1,38 @@
 ﻿using ClearBank.DeveloperTest.Application.Dtos;
-using ClearBank.DeveloperTest.Domain.Enums;
+using ClearBank.DeveloperTest.Application.Factories;
 using ClearBank.DeveloperTest.Domain.Repositories;
 
 namespace ClearBank.DeveloperTest.Application.Services;
 
-public class PaymentService : IPaymentService
+public class PaymentService
 {
-    private IAccountRepository _accountRepository;
-    
-    public PaymentService(IAccountRepository accountRepository)
+    private readonly IAccountRepository _accountRepository;
+    private readonly IPaymentRuleFactory _paymentRuleFactory;
+
+    public PaymentService(IAccountRepository accountRepository, IPaymentRuleFactory paymentRuleFactory)
     {
         _accountRepository = accountRepository;
+        _paymentRuleFactory = paymentRuleFactory;
     }
-    
+
     public MakePaymentResult MakePayment(MakePaymentRequest request)
-    { 
+    {
         var account = _accountRepository.GetAccount(request.DebtorAccountNumber);
-        var result = new MakePaymentResult();
+        var rule = _paymentRuleFactory.GetRule(request.PaymentScheme);
 
-        result.Success = true;
-        
-        switch (request.PaymentScheme)
+        if (account == null)
         {
-            case PaymentScheme.Bacs:
-                if (account == null)
-                {
-                    result.Success = false;
-                }
-                else if (!account.AllowedPaymentSchemes.HasFlag(AllowedPaymentSchemes.Bacs))
-                {
-                    result.Success = false;
-                }
-                break;
-
-            case PaymentScheme.FasterPayments:
-                if (account == null)
-                {
-                    result.Success = false;
-                }
-                else if (!account.AllowedPaymentSchemes.HasFlag(AllowedPaymentSchemes.FasterPayments))
-                {
-                    result.Success = false;
-                }
-                else if (account.Balance < request.Amount)
-                {
-                    result.Success = false;
-                }
-                break;
-
-            case PaymentScheme.Chaps:
-                if (account == null)
-                {
-                    result.Success = false;
-                }
-                else if (!account.AllowedPaymentSchemes.HasFlag(AllowedPaymentSchemes.Chaps))
-                {
-                    result.Success = false;
-                }
-                else if (account.Status != AccountStatus.Live)
-                {
-                    result.Success = false;
-                }
-                break;
+            return new MakePaymentResult(false);
         }
-
+        
+        var result = rule.MakePayment(account, request);
         if (result.Success)
         {
-            account.Balance -= request.Amount;
             _accountRepository.UpdateAccount(account);
         }
-
+        
         return result;
     }
 }
+
 
