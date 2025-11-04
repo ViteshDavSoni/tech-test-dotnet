@@ -1,7 +1,7 @@
-using ClearBank.DeveloperTest.Application.PaymentRules;
 using ClearBank.DeveloperTest.Domain.Enums;
+using ClearBank.DeveloperTest.Domain.PaymentRules;
 
-namespace ClearBank.DeveloperTest.Application.Factories;
+namespace ClearBank.DeveloperTest.Domain.Factories;
 
 public interface IPaymentRuleFactory
 {

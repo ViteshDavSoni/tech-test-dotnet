@@ -1,5 +1,5 @@
 ﻿using ClearBank.DeveloperTest.Application.Dtos;
-using ClearBank.DeveloperTest.Application.Factories;
+using ClearBank.DeveloperTest.Domain.Factories;
 using ClearBank.DeveloperTest.Domain.Repositories;
 
 namespace ClearBank.DeveloperTest.Application.Services;
@@ -25,13 +25,13 @@ public class PaymentService : IPaymentService
             return new MakePaymentResult(false);
         }
         
-        var result = rule.MakePayment(account, request);
-        if (result.Success)
+        var paymentSuccessful = rule.MakePayment(account, account.Status, request.Amount);
+        if (paymentSuccessful)
         {
             _accountRepository.UpdateAccount(account);
         }
         
-        return result;
+        return new MakePaymentResult(paymentSuccessful);
     }
 }
 

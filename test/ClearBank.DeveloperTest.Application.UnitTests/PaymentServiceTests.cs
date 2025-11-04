@@ -1,9 +1,9 @@
 using ClearBank.DeveloperTest.Application.Dtos;
-using ClearBank.DeveloperTest.Application.Factories;
-using ClearBank.DeveloperTest.Application.PaymentRules;
 using ClearBank.DeveloperTest.Application.Services;
 using ClearBank.DeveloperTest.Domain.Entities;
 using ClearBank.DeveloperTest.Domain.Enums;
+using ClearBank.DeveloperTest.Domain.Factories;
+using ClearBank.DeveloperTest.Domain.PaymentRules;
 using ClearBank.DeveloperTest.Domain.Repositories;
 using FluentAssertions;
 using Moq;
