@@ -12,50 +12,12 @@ namespace ClearBank.DeveloperTest.Application.UnitTests;
 public class PaymentServiceTests
 {
     private readonly Mock<IAccountRepository> _accountRepositoryMock;
-    private readonly PaymentService _paymentService;
+    private readonly IPaymentService _paymentService;
     
     public PaymentServiceTests()
     {
         _accountRepositoryMock = new Mock<IAccountRepository>();
         _paymentService = new PaymentService(_accountRepositoryMock.Object);
-    }
-    
-    [TestMethod]
-    public void MakePayment_WithValidRequest_ReturnsSuccessfulResult()
-    {
-        var account = Account.CreateNewAccount("accountNumber");
-        _accountRepositoryMock.Setup(x => x.GetAccount(It.IsAny<string>())).Returns(account);
-        
-        var request = new MakePaymentRequest
-        {
-            Amount = 10,
-            CreditorAccountNumber = "creditorAccountNumber",
-            DebtorAccountNumber = "debtorAccountNumber",
-            PaymentScheme = PaymentScheme.Bacs,
-            PaymentDate = DateTime.Now
-        };
-        var result = _paymentService.MakePayment(request);
-
-        result.Success.Should().BeTrue();
-    }
-    
-    [TestMethod]
-    public void MakePayment_WithInvalidDebtorAccountRequest_ReturnsUnsuccessfulResult()
-    {
-        var invalidAccountNumber = "invalidAccountNumber";
-        _accountRepositoryMock.Setup(x => x.GetAccount(invalidAccountNumber)).Returns((Account?)null);
-        var request = new MakePaymentRequest
-        {
-            Amount = 10,
-            CreditorAccountNumber = "creditorAccountNumber",
-            DebtorAccountNumber = invalidAccountNumber,
-            PaymentScheme = PaymentScheme.Bacs,
-            PaymentDate = DateTime.Now
-        };
-        
-        var result = _paymentService.MakePayment(request);
-
-        result.Success.Should().BeFalse();
     }
     
     [TestMethod]
@@ -78,6 +40,25 @@ public class PaymentServiceTests
 
         result.Success.Should().BeTrue();
         _accountRepositoryMock.Verify(r => r.UpdateAccount(It.Is<Account>(a => a.Balance == 10)), Times.Once);
+    }
+    
+    [TestMethod]
+    public void MakePayment_WithInvalidDebtorAccountRequest_ReturnsUnsuccessfulResult()
+    {
+        var invalidAccountNumber = "invalidAccountNumber";
+        _accountRepositoryMock.Setup(x => x.GetAccount(invalidAccountNumber)).Returns((Account?)null);
+        var request = new MakePaymentRequest
+        {
+            Amount = 10,
+            CreditorAccountNumber = "creditorAccountNumber",
+            DebtorAccountNumber = invalidAccountNumber,
+            PaymentScheme = PaymentScheme.Bacs,
+            PaymentDate = DateTime.Now
+        };
+        
+        var result = _paymentService.MakePayment(request);
+
+        result.Success.Should().BeFalse();
     }
     
     [TestMethod]
