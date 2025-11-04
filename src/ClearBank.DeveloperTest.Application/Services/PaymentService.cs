@@ -4,7 +4,7 @@ using ClearBank.DeveloperTest.Domain.Repositories;
 
 namespace ClearBank.DeveloperTest.Application.Services;
 
-public class PaymentService
+public class PaymentService : IPaymentService
 {
     private readonly IAccountRepository _accountRepository;
     private readonly IPaymentRuleFactory _paymentRuleFactory;

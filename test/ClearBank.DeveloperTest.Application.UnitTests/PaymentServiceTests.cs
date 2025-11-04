@@ -14,167 +14,158 @@ namespace ClearBank.DeveloperTest.Application.UnitTests;
 public class PaymentServiceTests
 {
     private readonly Mock<IAccountRepository> _accountRepositoryMock;
-    private readonly PaymentService _paymentService;
-    
+    private readonly IPaymentService _paymentService;
+
     public PaymentServiceTests()
     {
         _accountRepositoryMock = new Mock<IAccountRepository>();
-        var paymentRuleFactory = new PaymentRuleFactory([
+
+        var paymentRules = new List<IPaymentRule>
+        {
             new BacsPaymentRule(),
             new ChapsPaymentRule(),
             new FasterPaymentsRule()
-        ]);
+        };
+
+        var paymentRuleFactory = new PaymentRuleFactory(paymentRules);
         _paymentService = new PaymentService(_accountRepositoryMock.Object, paymentRuleFactory);
     }
-    
-    [TestMethod]
-    public void MakePayment_WithAllowedPaymentScheme_UpdatesAccountBalance()
+
+    [DataTestMethod]
+    [DataRow(PaymentScheme.Bacs, AllowedPaymentSchemes.Bacs, true)]
+    [DataRow(PaymentScheme.FasterPayments, AllowedPaymentSchemes.FasterPayments, true)]
+    [DataRow(PaymentScheme.Chaps, AllowedPaymentSchemes.Chaps, true)]
+    [DataRow(PaymentScheme.Bacs, AllowedPaymentSchemes.FasterPayments, false)]
+    [DataRow(PaymentScheme.Bacs, AllowedPaymentSchemes.Chaps, false)]
+    [DataRow(PaymentScheme.FasterPayments, AllowedPaymentSchemes.Bacs, false)]
+    [DataRow(PaymentScheme.FasterPayments, AllowedPaymentSchemes.Chaps, false)]
+    [DataRow(PaymentScheme.Chaps, AllowedPaymentSchemes.Bacs, false)]
+    [DataRow(PaymentScheme.Chaps, AllowedPaymentSchemes.FasterPayments, false)]
+    public void MakePayment_WithVariousPaymentSchemeCombinations_ReturnsExpectedResult(
+        PaymentScheme paymentScheme,
+        AllowedPaymentSchemes allowedSchemes,
+        bool expectedSuccess)
     {
         var accountNumber = "accountNumber";
-        var account = new Account(accountNumber, 20, AccountStatus.Live, AllowedPaymentSchemes.Bacs);
-        _accountRepositoryMock.Setup(x => x.GetAccount(accountNumber)).Returns(account);
         
-        var request = new MakePaymentRequest
-        {
-            Amount = 10,
-            CreditorAccountNumber = "creditorAccountNumber",
-            DebtorAccountNumber = accountNumber,
-            PaymentScheme = PaymentScheme.Bacs,
-            PaymentDate = DateTime.Now
-        };
+        var account = new Account(accountNumber, 20, AccountStatus.Live, allowedSchemes);
+        _accountRepositoryMock.Setup(x => x.GetAccount(accountNumber)).Returns(account);
+
+        var request = new MakePaymentRequest(
+            "creditorAccountNumber",
+            accountNumber,
+            10,
+            DateTime.Now,
+            paymentScheme);
         
         var result = _paymentService.MakePayment(request);
+        result.Success.Should().Be(expectedSuccess);
 
-        result.Success.Should().BeTrue();
-        _accountRepositoryMock.Verify(r => r.UpdateAccount(It.Is<Account>(a => a.Balance == 10)), Times.Once);
+        if (expectedSuccess)
+        {
+            _accountRepositoryMock.Verify(r => r.UpdateAccount(It.Is<Account>(a => a.Balance == 10)), Times.Once);
+        }
+        else
+        {
+            _accountRepositoryMock.Verify(r => r.UpdateAccount(It.IsAny<Account>()), Times.Never);
+        }
     }
-    
+
     [TestMethod]
-    public void MakePayment_WithInvalidDebtorAccountRequest_ReturnsUnsuccessfulResult()
+    public void MakePayment_InvalidAccount_ReturnsUnsuccessful()
     {
         var invalidAccountNumber = "invalidAccountNumber";
         _accountRepositoryMock.Setup(x => x.GetAccount(invalidAccountNumber)).Returns((Account?)null);
-        var request = new MakePaymentRequest
-        {
-            Amount = 10,
-            CreditorAccountNumber = "creditorAccountNumber",
-            DebtorAccountNumber = invalidAccountNumber,
-            PaymentScheme = PaymentScheme.Bacs,
-            PaymentDate = DateTime.Now
-        };
-        
+
+        var request = new MakePaymentRequest(
+            "creditorAccountNumber", 
+            invalidAccountNumber, 
+            10, 
+            DateTime.Now, 
+            PaymentScheme.Chaps);
+
         var result = _paymentService.MakePayment(request);
 
         result.Success.Should().BeFalse();
     }
-    
+
     [TestMethod]
-    public void MakePayment_WithDisallowedPaymentScheme_ReturnsUnsuccessfulResult()
+    public void MakePayment_FasterPayment_WithSufficientBalance_UpdatesBalance()
+    {
+        var accountNumber = "accountNumber";
+        var account = new Account(accountNumber, 100, AccountStatus.Live, AllowedPaymentSchemes.FasterPayments);
+        _accountRepositoryMock.Setup(x => x.GetAccount(accountNumber)).Returns(account);
+
+        var request = new MakePaymentRequest(
+            "creditorAccountNumber", 
+            accountNumber, 
+            10, 
+            DateTime.Now, 
+            PaymentScheme.FasterPayments);
+
+        var result = _paymentService.MakePayment(request);
+
+        result.Success.Should().BeTrue();
+        _accountRepositoryMock.Verify(r => r.UpdateAccount(It.Is<Account>(a => a.Balance == 90)), Times.Once);
+    }
+
+    [TestMethod]
+    public void MakePayment_FasterPayment_InsufficientBalance_ReturnsUnsuccessful()
     {
         var accountNumber = "accountNumber";
         var account = new Account(accountNumber, 0, AccountStatus.Live, AllowedPaymentSchemes.FasterPayments);
         _accountRepositoryMock.Setup(x => x.GetAccount(accountNumber)).Returns(account);
-        
-        var request = new MakePaymentRequest
-        {
-            Amount = 10,
-            CreditorAccountNumber = "creditorAccountNumber",
-            DebtorAccountNumber = accountNumber,
-            PaymentScheme = PaymentScheme.Chaps,
-            PaymentDate = DateTime.Now
-        };
-        
+
+        var request = new MakePaymentRequest(
+            "creditorAccountNumber", 
+            accountNumber, 
+            10, 
+            DateTime.Now, 
+            PaymentScheme.FasterPayments);
+
         var result = _paymentService.MakePayment(request);
 
         result.Success.Should().BeFalse();
         _accountRepositoryMock.Verify(r => r.UpdateAccount(It.IsAny<Account>()), Times.Never);
     }
-    
-    [TestMethod]
-    public void MakePayment_WithFasterPaymentScheme_AndWithBalanceGreaterThanRequestAmount_UpdatesAccountBalance()
-    {
-        var accountNumber = "accountNumber";
-        var account = new Account(accountNumber, 100, AccountStatus.Live, AllowedPaymentSchemes.FasterPayments);
-        _accountRepositoryMock.Setup(x => x.GetAccount(accountNumber)).Returns(account);
-        
-        var request = new MakePaymentRequest
-        {
-            Amount = 10,
-            CreditorAccountNumber = "creditorAccountNumber",
-            DebtorAccountNumber = accountNumber,
-            PaymentScheme = PaymentScheme.FasterPayments,
-            PaymentDate = DateTime.Now
-        };
-        
-        var result = _paymentService.MakePayment(request);
 
-        result.Success.Should().BeTrue();
-        _accountRepositoryMock.Verify(r => r.UpdateAccount(It.Is<Account>(a => a.Balance == 90)), Times.Once);    
-    }
-    
     [TestMethod]
-    public void MakePayment_WithFasterPaymentScheme_AndWithBalanceLessThanRequestAmount_ReturnsUnsuccessfulResult()
-    {
-        var accountNumber = "accountNumber";
-        var account = new Account(accountNumber, 0, AccountStatus.Live, AllowedPaymentSchemes.FasterPayments);
-        _accountRepositoryMock.Setup(x => x.GetAccount(accountNumber)).Returns(account);
-        
-        var request = new MakePaymentRequest
-        {
-            Amount = 10,
-            CreditorAccountNumber = "creditorAccountNumber",
-            DebtorAccountNumber = accountNumber,
-            PaymentScheme = PaymentScheme.FasterPayments,
-            PaymentDate = DateTime.Now
-        };
-        
-        var result = _paymentService.MakePayment(request);
-
-        result.Success.Should().BeFalse();
-        _accountRepositoryMock.Verify(r => r.UpdateAccount(It.IsAny<Account>()), Times.Never());    
-    }
-    
-    [TestMethod]
-    public void MakePayment_WithChapsPaymentScheme_AndLiveAccount_UpdatesAccountBalance()
+    public void MakePayment_ChapsPayment_LiveAccount_UpdatesBalance()
     {
         var accountNumber = "accountNumber";
         var account = new Account(accountNumber, 100, AccountStatus.Live, AllowedPaymentSchemes.Chaps);
         _accountRepositoryMock.Setup(x => x.GetAccount(accountNumber)).Returns(account);
-        
-        var request = new MakePaymentRequest
-        {
-            Amount = 10,
-            CreditorAccountNumber = "creditorAccountNumber",
-            DebtorAccountNumber = accountNumber,
-            PaymentScheme = PaymentScheme.Chaps,
-            PaymentDate = DateTime.Now
-        };
-        
+
+        var request = new MakePaymentRequest(
+            "creditorAccountNumber", 
+            accountNumber, 
+            10, 
+            DateTime.Now, 
+            PaymentScheme.Chaps);
+
         var result = _paymentService.MakePayment(request);
 
         result.Success.Should().BeTrue();
-        _accountRepositoryMock.Verify(r => r.UpdateAccount(It.Is<Account>(a => a.Balance == 90)), Times.Once);    
+        _accountRepositoryMock.Verify(r => r.UpdateAccount(It.Is<Account>(a => a.Balance == 90)), Times.Once);
     }
-    
+
     [TestMethod]
-    public void MakePayment_WithChapsPaymentScheme_AndNonLiveAccount_ReturnsUnsuccessfulResult()
+    public void MakePayment_ChapsPayment_NonLiveAccount_ReturnsUnsuccessful()
     {
         var accountNumber = "accountNumber";
         var account = new Account(accountNumber, 0, AccountStatus.Disabled, AllowedPaymentSchemes.Chaps);
         _accountRepositoryMock.Setup(x => x.GetAccount(accountNumber)).Returns(account);
-        
-        var request = new MakePaymentRequest
-        {
-            Amount = 10,
-            CreditorAccountNumber = "creditorAccountNumber",
-            DebtorAccountNumber = accountNumber,
-            PaymentScheme = PaymentScheme.Chaps,
-            PaymentDate = DateTime.Now
-        };
+
+        var request = new MakePaymentRequest(
+            "creditorAccountNumber", 
+            accountNumber, 
+            10, 
+            DateTime.Now, 
+            PaymentScheme.Chaps);
         
         var result = _paymentService.MakePayment(request);
 
         result.Success.Should().BeFalse();
-        _accountRepositoryMock.Verify(r => r.UpdateAccount(It.IsAny<Account>()), Times.Never());    
+        _accountRepositoryMock.Verify(r => r.UpdateAccount(It.IsAny<Account>()), Times.Never);
     }
 }

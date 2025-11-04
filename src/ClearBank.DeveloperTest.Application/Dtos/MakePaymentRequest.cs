@@ -13,5 +13,15 @@ namespace ClearBank.DeveloperTest.Application.Dtos
         public DateTime PaymentDate { get; set; }
 
         public PaymentScheme PaymentScheme { get; set; }
+
+        public MakePaymentRequest(string creditorAccountNumber, string debtorAccountNumber, decimal amount,
+            DateTime paymentDate, PaymentScheme paymentScheme)
+        {
+            CreditorAccountNumber = creditorAccountNumber;
+            DebtorAccountNumber = debtorAccountNumber;
+            Amount = amount;
+            PaymentDate = paymentDate;
+            PaymentScheme = paymentScheme;
+        }
     }
 }
