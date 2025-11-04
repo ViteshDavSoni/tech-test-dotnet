@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClearBank.DeveloperTest", "ClearBank.DeveloperTest\ClearBank.DeveloperTest.csproj", "{5B180045-B13B-443E-82AF-E6F1D1247111}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearBank.DeveloperTest.Domain", "src\ClearBank.DeveloperTest.Domain\ClearBank.DeveloperTest.Domain.csproj", "{2D7EEA2A-2AA5-410C-A21E-0F124EE62F73}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClearBank.DeveloperTest.Tests", "ClearBank.DeveloperTest.Tests\ClearBank.DeveloperTest.Tests.csproj", "{A3CA1845-E8EC-4B29-8E5C-F1E69CF73F25}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearBank.DeveloperTest.Application", "src\ClearBank.DeveloperTest.Application\ClearBank.DeveloperTest.Application.csproj", "{6CD5A136-16B1-43F0-9D53-444881654179}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearBank.DeveloperTest.Infrastructure", "src\ClearBank.DeveloperTest.Infrastructure\ClearBank.DeveloperTest.Infrastructure.csproj", "{72A75FBD-DB18-4A5A-98BC-94D3E1E3BC95}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +15,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5B180045-B13B-443E-82AF-E6F1D1247111}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5B180045-B13B-443E-82AF-E6F1D1247111}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5B180045-B13B-443E-82AF-E6F1D1247111}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5B180045-B13B-443E-82AF-E6F1D1247111}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A3CA1845-E8EC-4B29-8E5C-F1E69CF73F25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A3CA1845-E8EC-4B29-8E5C-F1E69CF73F25}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A3CA1845-E8EC-4B29-8E5C-F1E69CF73F25}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A3CA1845-E8EC-4B29-8E5C-F1E69CF73F25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D7EEA2A-2AA5-410C-A21E-0F124EE62F73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D7EEA2A-2AA5-410C-A21E-0F124EE62F73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D7EEA2A-2AA5-410C-A21E-0F124EE62F73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D7EEA2A-2AA5-410C-A21E-0F124EE62F73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CD5A136-16B1-43F0-9D53-444881654179}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CD5A136-16B1-43F0-9D53-444881654179}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CD5A136-16B1-43F0-9D53-444881654179}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CD5A136-16B1-43F0-9D53-444881654179}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72A75FBD-DB18-4A5A-98BC-94D3E1E3BC95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72A75FBD-DB18-4A5A-98BC-94D3E1E3BC95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72A75FBD-DB18-4A5A-98BC-94D3E1E3BC95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72A75FBD-DB18-4A5A-98BC-94D3E1E3BC95}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

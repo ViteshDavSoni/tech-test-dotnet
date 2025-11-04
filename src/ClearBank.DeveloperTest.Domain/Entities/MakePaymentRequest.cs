@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ClearBank.DeveloperTest.Types
+﻿namespace ClearBank.DeveloperTest.Domain.Entities
 {
     public class MakePaymentRequest
     {

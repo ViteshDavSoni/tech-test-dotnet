@@ -1,8 +1,8 @@
-﻿using ClearBank.DeveloperTest.Types;
+﻿using ClearBank.DeveloperTest.Domain.Entities;
 
-namespace ClearBank.DeveloperTest.Data
+namespace ClearBank.DeveloperTest.Infrastructure.Repositories
 {
-    public class BackupAccountDataStore
+    public class BackupAccountRepository
     {
         public Account GetAccount(string accountNumber)
         {

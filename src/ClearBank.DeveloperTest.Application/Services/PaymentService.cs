@@ -1,8 +1,8 @@
-﻿using ClearBank.DeveloperTest.Data;
-using ClearBank.DeveloperTest.Types;
-using System.Configuration;
+﻿using System.Configuration;
+using ClearBank.DeveloperTest.Domain.Entities;
+using ClearBank.DeveloperTest.Infrastructure.Repositories;
 
-namespace ClearBank.DeveloperTest.Services
+namespace ClearBank.DeveloperTest.Application.Services
 {
     public class PaymentService : IPaymentService
     {
@@ -14,12 +14,12 @@ namespace ClearBank.DeveloperTest.Services
 
             if (dataStoreType == "Backup")
             {
-                var accountDataStore = new BackupAccountDataStore();
+                var accountDataStore = new BackupAccountRepository();
                 account = accountDataStore.GetAccount(request.DebtorAccountNumber);
             }
             else
             {
-                var accountDataStore = new AccountDataStore();
+                var accountDataStore = new AccountRepository();
                 account = accountDataStore.GetAccount(request.DebtorAccountNumber);
             }
 
@@ -77,12 +77,12 @@ namespace ClearBank.DeveloperTest.Services
 
                 if (dataStoreType == "Backup")
                 {
-                    var accountDataStore = new BackupAccountDataStore();
+                    var accountDataStore = new BackupAccountRepository();
                     accountDataStore.UpdateAccount(account);
                 }
                 else
                 {
-                    var accountDataStore = new AccountDataStore();
+                    var accountDataStore = new AccountRepository();
                     accountDataStore.UpdateAccount(account);
                 }
             }
