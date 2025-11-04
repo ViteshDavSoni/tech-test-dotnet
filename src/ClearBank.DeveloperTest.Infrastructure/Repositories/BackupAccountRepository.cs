@@ -5,7 +5,7 @@ namespace ClearBank.DeveloperTest.Infrastructure.Repositories
 {
     public class BackupAccountRepository : IAccountRepository
     {
-        public Account GetAccount(string accountNumber)
+        public Account? GetAccount(string accountNumber)
         {
             // Access backup data base to retrieve account, code removed for brevity 
             return Account.CreateNewAccount(accountNumber);
