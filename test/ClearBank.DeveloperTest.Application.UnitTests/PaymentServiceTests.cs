@@ -3,6 +3,7 @@ using ClearBank.DeveloperTest.Application.Services;
 using ClearBank.DeveloperTest.Domain.Entities;
 using ClearBank.DeveloperTest.Domain.Enums;
 using ClearBank.DeveloperTest.Domain.Repositories;
+using ClearBank.DeveloperTest.Infrastructure.Repositories;
 using FluentAssertions;
 using Moq;
 
@@ -16,14 +17,16 @@ public class PaymentServiceTests
     
     public PaymentServiceTests()
     {
-        _paymentService = new PaymentService();
         _accountRepositoryMock = new Mock<IAccountRepository>();
+        _paymentService = new PaymentService(_accountRepositoryMock.Object);
     }
     
     [TestMethod]
     public void MakePayment_WithValidRequest_ReturnsSuccessfulResult()
     {
-        var service = new PaymentService();
+        var account = Account.CreateNewAccount("accountNumber");
+        _accountRepositoryMock.Setup(x => x.GetAccount(It.IsAny<string>())).Returns(account);
+        
         var request = new MakePaymentRequest
         {
             Amount = 10,
@@ -32,7 +35,7 @@ public class PaymentServiceTests
             PaymentScheme = PaymentScheme.Bacs,
             PaymentDate = DateTime.Now
         };
-        var result = service.MakePayment(request);
+        var result = _paymentService.MakePayment(request);
 
         result.Success.Should().BeTrue();
     }

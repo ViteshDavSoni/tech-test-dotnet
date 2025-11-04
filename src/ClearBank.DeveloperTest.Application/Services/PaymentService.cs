@@ -1,95 +1,81 @@
-﻿using System.Configuration;
-using ClearBank.DeveloperTest.Application.Dtos;
+﻿using ClearBank.DeveloperTest.Application.Dtos;
 using ClearBank.DeveloperTest.Domain.Entities;
 using ClearBank.DeveloperTest.Domain.Enums;
+using ClearBank.DeveloperTest.Domain.Repositories;
 using ClearBank.DeveloperTest.Infrastructure.Repositories;
 
-namespace ClearBank.DeveloperTest.Application.Services
+namespace ClearBank.DeveloperTest.Application.Services;
+
+public class PaymentService : IPaymentService
 {
-    public class PaymentService : IPaymentService
+    private IAccountRepository _accountRepository;
+    
+    public PaymentService(IAccountRepository accountRepository)
     {
-        public MakePaymentResult MakePayment(MakePaymentRequest request)
+        _accountRepository = accountRepository;
+    }
+    
+    public MakePaymentResult MakePayment(MakePaymentRequest request)
+    {
+        Account? account = null;
+        
+        account = _accountRepository.GetAccount(request.DebtorAccountNumber);
+        
+        var result = new MakePaymentResult();
+
+        result.Success = true;
+        
+        switch (request.PaymentScheme)
         {
-            var dataStoreType = ConfigurationManager.AppSettings["DataStoreType"];
-
-            Account account = null;
-
-            if (dataStoreType == "Backup")
-            {
-                var accountDataStore = new BackupAccountRepository();
-                account = accountDataStore.GetAccount(request.DebtorAccountNumber);
-            }
-            else
-            {
-                var accountDataStore = new AccountRepository();
-                account = accountDataStore.GetAccount(request.DebtorAccountNumber);
-            }
-
-            var result = new MakePaymentResult();
-
-            result.Success = true;
-            
-            switch (request.PaymentScheme)
-            {
-                case PaymentScheme.Bacs:
-                    if (account == null)
-                    {
-                        result.Success = false;
-                    }
-                    else if (!account.AllowedPaymentSchemes.HasFlag(AllowedPaymentSchemes.Bacs))
-                    {
-                        result.Success = false;
-                    }
-                    break;
-
-                case PaymentScheme.FasterPayments:
-                    if (account == null)
-                    {
-                        result.Success = false;
-                    }
-                    else if (!account.AllowedPaymentSchemes.HasFlag(AllowedPaymentSchemes.FasterPayments))
-                    {
-                        result.Success = false;
-                    }
-                    else if (account.Balance < request.Amount)
-                    {
-                        result.Success = false;
-                    }
-                    break;
-
-                case PaymentScheme.Chaps:
-                    if (account == null)
-                    {
-                        result.Success = false;
-                    }
-                    else if (!account.AllowedPaymentSchemes.HasFlag(AllowedPaymentSchemes.Chaps))
-                    {
-                        result.Success = false;
-                    }
-                    else if (account.Status != AccountStatus.Live)
-                    {
-                        result.Success = false;
-                    }
-                    break;
-            }
-
-            if (result.Success)
-            {
-                account.Balance -= request.Amount;
-
-                if (dataStoreType == "Backup")
+            case PaymentScheme.Bacs:
+                if (account == null)
                 {
-                    var accountDataStore = new BackupAccountRepository();
-                    accountDataStore.UpdateAccount(account);
+                    result.Success = false;
                 }
-                else
+                else if (!account.AllowedPaymentSchemes.HasFlag(AllowedPaymentSchemes.Bacs))
                 {
-                    var accountDataStore = new AccountRepository();
-                    accountDataStore.UpdateAccount(account);
+                    result.Success = false;
                 }
-            }
+                break;
 
-            return result;
+            case PaymentScheme.FasterPayments:
+                if (account == null)
+                {
+                    result.Success = false;
+                }
+                else if (!account.AllowedPaymentSchemes.HasFlag(AllowedPaymentSchemes.FasterPayments))
+                {
+                    result.Success = false;
+                }
+                else if (account.Balance < request.Amount)
+                {
+                    result.Success = false;
+                }
+                break;
+
+            case PaymentScheme.Chaps:
+                if (account == null)
+                {
+                    result.Success = false;
+                }
+                else if (!account.AllowedPaymentSchemes.HasFlag(AllowedPaymentSchemes.Chaps))
+                {
+                    result.Success = false;
+                }
+                else if (account.Status != AccountStatus.Live)
+                {
+                    result.Success = false;
+                }
+                break;
         }
+
+        if (result.Success)
+        {
+            account.Balance -= request.Amount;
+            _accountRepository.UpdateAccount(account);
+        }
+
+        return result;
     }
 }
+
