@@ -1,8 +1,6 @@
 ﻿using ClearBank.DeveloperTest.Application.Dtos;
-using ClearBank.DeveloperTest.Domain.Entities;
 using ClearBank.DeveloperTest.Domain.Enums;
 using ClearBank.DeveloperTest.Domain.Repositories;
-using ClearBank.DeveloperTest.Infrastructure.Repositories;
 
 namespace ClearBank.DeveloperTest.Application.Services;
 
@@ -16,11 +14,8 @@ public class PaymentService : IPaymentService
     }
     
     public MakePaymentResult MakePayment(MakePaymentRequest request)
-    {
-        Account? account = null;
-        
-        account = _accountRepository.GetAccount(request.DebtorAccountNumber);
-        
+    { 
+        var account = _accountRepository.GetAccount(request.DebtorAccountNumber);
         var result = new MakePaymentResult();
 
         result.Success = true;

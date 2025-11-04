@@ -2,8 +2,8 @@
 {
     public enum AllowedPaymentSchemes
     {
-        FasterPayments = 1,
-        Bacs = 2,
-        Chaps = 3
+        FasterPayments = 1 << 0,
+        Bacs = 1 << 1,
+        Chaps = 1 << 2
     }
 }
