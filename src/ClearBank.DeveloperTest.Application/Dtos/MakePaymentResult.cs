@@ -1,4 +1,4 @@
-﻿namespace ClearBank.DeveloperTest.Domain.Entities
+﻿namespace ClearBank.DeveloperTest.Application.Dtos
 {
     public class MakePaymentResult
     {

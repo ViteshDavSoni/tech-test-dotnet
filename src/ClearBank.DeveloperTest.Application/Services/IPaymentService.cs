@@ -1,4 +1,4 @@
-﻿using ClearBank.DeveloperTest.Domain.Entities;
+﻿using ClearBank.DeveloperTest.Application.Dtos;
 
 namespace ClearBank.DeveloperTest.Application.Services
 {

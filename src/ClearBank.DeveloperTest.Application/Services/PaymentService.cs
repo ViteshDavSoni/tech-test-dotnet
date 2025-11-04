@@ -1,5 +1,7 @@
 ﻿using System.Configuration;
+using ClearBank.DeveloperTest.Application.Dtos;
 using ClearBank.DeveloperTest.Domain.Entities;
+using ClearBank.DeveloperTest.Domain.Enums;
 using ClearBank.DeveloperTest.Infrastructure.Repositories;
 
 namespace ClearBank.DeveloperTest.Application.Services

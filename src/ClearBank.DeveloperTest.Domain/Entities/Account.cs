@@ -1,4 +1,6 @@
-﻿namespace ClearBank.DeveloperTest.Domain.Entities
+﻿using ClearBank.DeveloperTest.Domain.Enums;
+
+namespace ClearBank.DeveloperTest.Domain.Entities
 {
     public class Account
     {
