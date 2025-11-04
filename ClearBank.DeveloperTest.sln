@@ -9,6 +9,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearBank.DeveloperTest.App
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearBank.DeveloperTest.Infrastructure", "src\ClearBank.DeveloperTest.Infrastructure\ClearBank.DeveloperTest.Infrastructure.csproj", "{72A75FBD-DB18-4A5A-98BC-94D3E1E3BC95}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{D5D58A43-08B8-44DE-9A80-9784A3FF8D10}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearBank.DeveloperTest.Domain.UnitTests", "test\ClearBank.DeveloperTest.Domain.UnitTests\ClearBank.DeveloperTest.Domain.UnitTests.csproj", "{1D22EB42-2508-402C-B401-6102D0163CBE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearBank.DeveloperTest.Application.UnitTests", "test\ClearBank.DeveloperTest.Application.UnitTests\ClearBank.DeveloperTest.Application.UnitTests.csproj", "{28F57D6E-B63B-4C26-BCDD-7328C26D5AB8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearBank.DeveloperTest.Infrastructure.UnitTests", "test\ClearBank.DeveloperTest.Infrastructure.UnitTests\ClearBank.DeveloperTest.Infrastructure.UnitTests.csproj", "{F66F1677-D388-4240-8004-B0A4162A25D4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,11 +35,28 @@ Global
 		{72A75FBD-DB18-4A5A-98BC-94D3E1E3BC95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72A75FBD-DB18-4A5A-98BC-94D3E1E3BC95}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72A75FBD-DB18-4A5A-98BC-94D3E1E3BC95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D22EB42-2508-402C-B401-6102D0163CBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D22EB42-2508-402C-B401-6102D0163CBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D22EB42-2508-402C-B401-6102D0163CBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D22EB42-2508-402C-B401-6102D0163CBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28F57D6E-B63B-4C26-BCDD-7328C26D5AB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28F57D6E-B63B-4C26-BCDD-7328C26D5AB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28F57D6E-B63B-4C26-BCDD-7328C26D5AB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28F57D6E-B63B-4C26-BCDD-7328C26D5AB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F66F1677-D388-4240-8004-B0A4162A25D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F66F1677-D388-4240-8004-B0A4162A25D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F66F1677-D388-4240-8004-B0A4162A25D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F66F1677-D388-4240-8004-B0A4162A25D4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BCDD9DD6-D423-48D4-BF2E-67533CADECAD}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1D22EB42-2508-402C-B401-6102D0163CBE} = {D5D58A43-08B8-44DE-9A80-9784A3FF8D10}
+		{28F57D6E-B63B-4C26-BCDD-7328C26D5AB8} = {D5D58A43-08B8-44DE-9A80-9784A3FF8D10}
+		{F66F1677-D388-4240-8004-B0A4162A25D4} = {D5D58A43-08B8-44DE-9A80-9784A3FF8D10}
 	EndGlobalSection
 EndGlobal
